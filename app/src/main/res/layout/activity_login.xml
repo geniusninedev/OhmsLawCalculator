@@ -9,6 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="#F0F4C3"
     tools:context=".Login.LoginActivity">
 <ScrollView
     android:layout_width="match_parent"
@@ -19,20 +20,20 @@
         android:gravity="center"
         android:orientation="vertical">
         <TextView
-            android:text="BMR Calculator"
+            android:text="Ohms Law Calculator"
             android:gravity="center"
             android:textSize="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textStyle="bold"
-            android:textColor="#059733"
+            android:textColor="#827717"
             android:id="@+id/textView" />
         <com.pkmmte.view.CircularImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:id="@+id/imageView"
-
+android:background="@mipmap/ohm"
             app:border="true"
             android:layout_marginTop="20dp"
             app:border_color="#EEEEEE"
@@ -49,7 +50,7 @@
        />
 
         <TextView
-            android:text="“Exercise Is A Celebration Of What Your Body Can Do .Not A Punishment For What You Ate.”"
+            android:text="The law, in its majestic equality, forbids the rich as well as the poor to sleep under bridges, to beg in the streets, and to steal bread"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

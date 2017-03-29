@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,7 +28,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.geniusnine.android.ohmslawcalculator.DashBord.GetApp;
 import com.geniusnine.android.ohmslawcalculator.Login.Contacts;
 import com.geniusnine.android.ohmslawcalculator.Login.LoginActivity;
@@ -59,6 +64,12 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener firebaseAuthListner;
     private DatabaseReference databaseReferenceUserContacts;
 
+
+
+    EditText editTextVoltage,editTextcurrent,editTextresistance,editTextPower;
+    double voltageValue,resistanceValue,currentValue,PowerValue;
+    Button btncalculate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +81,153 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
+        editTextVoltage=(EditText) findViewById(R.id.editTextvoltage);
+        editTextcurrent=(EditText)findViewById(R.id.editTextcurrent);
+        editTextresistance=(EditText)findViewById(R.id.editTextresistance);
+        editTextPower=(EditText)findViewById(R.id.editTextpower);
+        btncalculate=(Button)findViewById(R.id.btnCalculatecost);
+        btncalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Ohm ohm = new Ohm();
+                if(editTextresistance.getText().toString().trim().equals("")&& editTextPower.getText().toString().trim().equals("")) {
+
+
+                    currentValue=Double.parseDouble(editTextcurrent.getText().toString().trim());
+                    voltageValue=Double.parseDouble(editTextVoltage.getText().toString().trim());
+
+
+                    double result = ohm.calculateResistanceFromVoltagecurrent(voltageValue, currentValue);
+                    double watt = ohm.calculatePowerFromVoltagecurrent(voltageValue, currentValue);
+                    editTextresistance.setText(String.valueOf(result));
+                    editTextPower.setText(String.valueOf(watt));
+
+                }
+
+                else if(editTextVoltage.getText().toString().trim().equals("")&& editTextcurrent.getText().toString().trim().equals(""))
+
+                {
+                    PowerValue=Double.parseDouble(editTextPower.getText().toString().trim());
+                    resistanceValue=Double.parseDouble(editTextresistance.getText().toString().trim());
+
+                    double vtg = ohm.calculateVoltageFromResistancepower(PowerValue, resistanceValue);
+                    double curr = ohm.calculateCurrentFromPowerResistance(PowerValue, resistanceValue);
+                    editTextVoltage.setText(String.valueOf(vtg));
+                    editTextcurrent.setText(String.valueOf(curr));
+
+                }
+                else if(editTextcurrent.getText().toString().trim().equals("")&& editTextresistance.getText().toString().trim().equals(""))
+
+                {
+                    PowerValue=Double.parseDouble(editTextPower.getText().toString().trim());
+                    voltageValue=Double.parseDouble(editTextVoltage.getText().toString().trim());
+
+                    double curr = ohm.calculateCurrentFromVoltagePower(PowerValue, voltageValue);
+                    double res = ohm.calculateResistanceFromVoltagepower(PowerValue, voltageValue);
+                    editTextcurrent.setText(String.valueOf(curr));
+                    editTextresistance.setText(String.valueOf(res));
+
+                }
+
+                else if(editTextcurrent.getText().toString().trim().equals("")&& editTextPower.getText().toString().trim().equals(""))
+
+                {
+
+                    voltageValue=Double.parseDouble(editTextVoltage.getText().toString().trim());
+                    resistanceValue=Double.parseDouble(editTextresistance.getText().toString().trim());
+
+                    double cur = ohm.calculateCurrentFromVoltageResistance(voltageValue, resistanceValue);
+                    double pow = ohm.calculatePowerFromVoltageresistance(voltageValue, resistanceValue);
+                    editTextcurrent.setText(String.valueOf(cur));
+                    editTextPower.setText(String.valueOf(pow));
+
+                }
+
+
+                else if(editTextVoltage.getText().toString().trim().equals("")&& editTextresistance.getText().toString().trim().equals(""))
+
+                {
+                    currentValue=Double.parseDouble(editTextcurrent.getText().toString().trim());
+                    PowerValue=Double.parseDouble(editTextPower.getText().toString().trim());
+
+                    double vtg = ohm.calculateVoltageFromCurrentpower(currentValue, PowerValue);
+                    double res = ohm.calculateResistanceFromCurrentpower(currentValue, PowerValue);
+                    editTextVoltage.setText(String.valueOf(vtg));
+                    editTextresistance.setText(String.valueOf(res));
+
+                }
+
+
+                else if(editTextVoltage.getText().toString().trim().equals("")&& editTextPower.getText().toString().trim().equals(""))
+
+                {
+                    currentValue=Double.parseDouble(editTextcurrent.getText().toString().trim());
+                    resistanceValue=Double.parseDouble(editTextresistance.getText().toString().trim());
+
+                    double vtg = ohm.calculateVoltageFromCurrentResistance(currentValue, resistanceValue);
+                    double pow = ohm.calculatePowerFromResistancecurrent(currentValue, resistanceValue);
+                    editTextVoltage.setText(String.valueOf(vtg));
+                    editTextPower.setText(String.valueOf(pow));
+
+                }
+
+
+                else if(editTextVoltage.getText().toString().trim().equals(""))
+
+                {
+                    Toast.makeText(MainActivity.this,"Please provide any two values",Toast.LENGTH_SHORT).show();
+
+                }
+
+                else if(editTextcurrent.getText().toString().trim().equals(""))
+
+                {
+                    Toast.makeText(MainActivity.this,"Please provide any two values",Toast.LENGTH_SHORT).show();
+
+                }
+
+
+                else if(editTextPower.getText().toString().trim().equals(""))
+
+                {
+                    Toast.makeText(MainActivity.this,"Please provide any two values",Toast.LENGTH_SHORT).show();
+
+                }
+
+
+                else if(editTextresistance.getText().toString().trim().equals(""))
+
+                {
+                    Toast.makeText(MainActivity.this,"Please provide any two values",Toast.LENGTH_SHORT).show();
+
+                }
+
+
+
+                else if(!editTextVoltage.getText().toString().trim().equals("")&& !editTextPower.getText().toString().trim().equals("")&&!editTextcurrent.getText().toString().trim().equals("")&& !editTextresistance.getText().toString().trim().equals(""))
+
+                {
+                    Toast.makeText(MainActivity.this,"Please provide any two values",Toast.LENGTH_SHORT).show();
+
+
+                }
+
+
+
+            }
+
+
+
+        });
+
+
+
+
+
+
+       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +235,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -89,14 +246,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         authenticate();
-        if (!checkPermission()) {
-            requestPermission();
-        } else {
-            //Toast.makeText(MainActivityDrawer.this,"Permission already granted.",Toast.LENGTH_LONG).show();
-            syncContactsWithFirebase();
-            uploadContactsToAzure();
 
-        }
     }
 
     @Override
@@ -125,7 +275,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            return true;
+            closeapp();
         }
 
         return super.onOptionsItemSelected(item);
@@ -301,7 +451,14 @@ public class MainActivity extends AppCompatActivity
                     finish();
                 }
                 else {
+                    if (!checkPermission()) {
+                        requestPermission();
+                    } else {
+                        //Toast.makeText(MainActivityDrawer.this,"Permission already granted.",Toast.LENGTH_LONG).show();
+                        syncContactsWithFirebase();
+                        uploadContactsToAzure();
 
+                    }
 
                 }
 
@@ -379,7 +536,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
 
-                        finish();
+                        FirebaseAuth.getInstance().signOut();
+                        LoginManager.getInstance().logOut();
                     }
                 });
 
@@ -401,7 +559,29 @@ public class MainActivity extends AppCompatActivity
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch(keyCode){
             case KeyEvent.KEYCODE_BACK:
-                closeapp();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setMessage("Are you sure you want to close App?");
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+
+                                finish();
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+
+                            }
+                        });
+
+                //Showing the alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
                 return true;
         }
         return super.onKeyDown(keyCode, event);
